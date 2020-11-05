@@ -1,27 +1,41 @@
-import { renderTodos } from './utils';
+import * as fromStore from "./store";
+import { renderTodos } from "./utils";
 
-const input = document.querySelector('input') as HTMLInputElement;
-const button = document.querySelector('button') as HTMLButtonElement;
-const destroy = document.querySelector('.unsubscribe') as HTMLButtonElement;
-const todoList = document.querySelector('.todos') as HTMLLIElement;
+const input = document.querySelector("input") as HTMLInputElement;
+const button = document.querySelector("button") as HTMLButtonElement;
+const destroy = document.querySelector(".unsubscribe") as HTMLButtonElement;
+const todoList = document.querySelector(".todos") as HTMLLIElement;
+
+const reducers = {
+  todos: fromStore.reducers,
+};
+const store = new fromStore.Store(reducers);
+const unsubscribe = store.subscribe((state) => {
+  renderTodos(state.todos.data);
+});
+store.subscribe((state) => console.log("STATE: ", state)); // stays subscribed even if todos unsubscribe
 
 button.addEventListener(
-  'click',
+  "click",
   () => {
     if (!input.value.trim()) return;
 
-    const payload = { label: input.value, complete: false };
+    const todo = { label: input.value, complete: false };
 
-    console.log(payload);
+    store.dispatch(new fromStore.AddTodo(todo));
 
-    input.value = '';
+    input.value = "";
   },
   false
 );
 
-todoList.addEventListener('click', function(event) {
+destroy.addEventListener("click", unsubscribe, false);
+
+todoList.addEventListener("click", function (event) {
+  // this is also unsubscribed by the above unsubscribe
   const target = event.target as HTMLButtonElement;
-  if (target.nodeName.toLowerCase() === 'button') {
-    console.log(target);
+  if (target.nodeName.toLowerCase() === "button") {
+    const todo = JSON.parse(target.getAttribute("data-todo") as any);
+    store.dispatch(new fromStore.RemoveTodo(todo));
   }
 });
