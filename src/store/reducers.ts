@@ -21,10 +21,7 @@ export function reducers(
       const data = state.data.filter(
         (todo: any) => todo.label !== action.payload.label
       );
-      return {
-        ...state,
-        data,
-      };
+      return { ...state, data };
     }
   }
   return state;

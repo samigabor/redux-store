@@ -31,8 +31,8 @@ button.addEventListener(
 
 destroy.addEventListener("click", unsubscribe, false);
 
+// this is also unsubscribed by the above unsubscribe
 todoList.addEventListener("click", function (event) {
-  // this is also unsubscribed by the above unsubscribe
   const target = event.target as HTMLButtonElement;
   if (target.nodeName.toLowerCase() === "button") {
     const todo = JSON.parse(target.getAttribute("data-todo") as any);
